@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101827">
+  <title>Phone Number Verification</title>
+  <style>
+    *{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;padding:24px;background:radial-gradient(circle at 20% 10%,#23395d 0,transparent 36%),#0b1220;color:#edf3ff;font-family:Inter,system-ui,Arial,sans-serif}
+    .card{width:min(100%,440px);padding:32px;border:1px solid #263750;border-radius:24px;background:rgba(17,27,44,.96);box-shadow:0 24px 80px #0007}
+    .logo{width:48px;height:48px;display:grid;place-items:center;border-radius:15px;background:#183e39;color:#6ee7b7;font-size:24px;margin-bottom:22px}
+    h1{font-size:25px;margin:0 0 9px;letter-spacing:-.5px}.sub{color:#9eacc1;line-height:1.55;margin:0 0 27px;font-size:14px}
+    label{display:block;font-size:13px;font-weight:650;margin:0 0 9px;color:#cbd5e1}.phone{display:flex;gap:10px}.code{padding:15px 13px;border:1px solid #34445c;border-radius:12px;background:#0d1727;color:#e5edf8;font-weight:700}
+    input{min-width:0;flex:1;padding:15px;border:1px solid #34445c;border-radius:12px;background:#0d1727;color:white;font-size:16px;outline:none}input:focus{border-color:#34d399;box-shadow:0 0 0 3px #34d39922}
+    button{width:100%;border:0;border-radius:12px;padding:15px;margin-top:17px;background:#34d399;color:#06251c;font-size:15px;font-weight:800;cursor:pointer}button:disabled{opacity:.6;cursor:wait}
+    .hint{font-size:12px;color:#8190a7;margin-top:12px;line-height:1.5}.status{display:none;margin-top:20px;padding:14px;border-radius:12px;font-size:14px;line-height:1.5}
+    .status.success{display:block;background:#0e3028;border:1px solid #17664e;color:#86efc1}.status.failed{display:block;background:#351d25;border:1px solid #793346;color:#fda4af}.status.error{display:block;background:#352a19;border:1px solid #765523;color:#fcd58b}
+    .foot{border-top:1px solid #29374c;margin-top:25px;padding-top:17px;color:#718198;font-size:11px;line-height:1.5}
+  </style>
+</head>
+<body>
+  <main class="card">
+    <div class="logo">✓</div>
+    <h1>Verify your phone</h1>
+    <p class="sub">Confirm access to your mobile number using Veriph.One's verification flow.</p>
+    <form id="form">
+      <label for="phone">Indian mobile number</label>
+      <div class="phone"><div class="code">🇮🇳 +91</div><input id="phone" type="tel" inputmode="numeric" autocomplete="tel-national" maxlength="10" placeholder="10-digit mobile number" required></div>
+      <button id="submit" type="submit">Start verification</button>
+      <p class="hint">You'll be redirected to Veriph.One to complete the verification. Methods depend on your account configuration and carrier support.</p>
+    </form>
+    <div id="status" class="status" role="status" aria-live="polite"></div>
+    <div class="foot">The result is checked by a server function. API credentials are not exposed in this webpage.</div>
+  </main>
+  <script>
+    const form=document.getElementById("form"),phone=document.getElementById("phone"),button=document.getElementById("submit"),box=document.getElementById("status");
+    phone.addEventListener("input",()=>phone.value=phone.value.replace(/\\D/g,"").slice(0,10));
+    form.addEventListener("submit",e=>{e.preventDefault();const v=phone.value.trim();if(!/^[6-9]\\d{9}$/.test(v)){box.className="status error";box.textContent="Enter a valid 10-digit Indian mobile number.";return;}button.disabled=true;button.textContent="Starting verification…";location.href="/verification-start?phone="+encodeURIComponent(v);});
+    const p=new URLSearchParams(location.search),s=p.get("status");
+    if(s==="success"){box.className="status success";box.textContent="✓ Phone number successfully verified.";}
+    else if(s==="failed"){box.className="status failed";box.textContent="✕ Verification failed or was not completed.";}
+    else if(s==="error"){box.className="status error";box.textContent="Verification error: "+(p.get("reason")||"Please try again.");}
+  </script>
+</body>
+</html>
