@@ -1,0 +1,13 @@
+[build]
+  publish = "public"
+  functions = "netlify/functions"
+
+[[redirects]]
+  from = "/verification-start"
+  to = "/.netlify/functions/verification-start"
+  status = 200
+
+[[redirects]]
+  from = "/verification-result"
+  to = "/.netlify/functions/verification-result"
+  status = 200
